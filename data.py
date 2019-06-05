@@ -20,10 +20,9 @@ def getPttPosts(html):
 
 def getPttContent(html):
 	print('data -> getTerms')
-	result = ''
 	tree = BeautifulSoup(html, 'lxml')
 	contentSection = tree.find('div', id='main-content')
-	result += ' '.join(tuple(content.strip().replace('\n\n', '\n') for content in contentSection.find_all(text=True) if content.parent.name == 'div' and content.strip()))
+	result = ' '.join(tuple(content.strip().replace('\n\n', '\n') for content in contentSection.find_all(text=True) if content.parent.name == 'div' and content.strip()))
 	for comment in contentSection.find_all('div', 'push'):
 		result += comment.find('span', 'push-tag').text.strip() + ' ' + comment.find('span', 'push-content').text.strip()[2:] + '\n'
 	return result

@@ -20,18 +20,27 @@ async def getWebContents(url):
 	contentHTML = await crawler.getHTML(url)
 	return data.getPttContent(contentHTML)
 
-async def getWebPosts(url):
+async def getWebPosts(url, pageIndex):
 	print('getWebPosts')
-	# 取得頁面的所有文章
+	# 非同步取得頁面的所有文章
+	print('start page: {}'.format(pageIndex))
 	pageHTML = await crawler.getHTML(url)
-	return data.getPttPosts(pageHTML)
+	postTasks = tuple(getWebContents(post) for post in data.getPttPosts(pageHTML))
+	temp = await asyncio.gather(*postTasks)
+	print('end page: {}'.format(pageIndex))
+	return temp
 
-async def getWebList(website):
+async def getWebList(website, page):
 	print('getWebsites')
 	# 取得頁碼網址
 	if website == 'PTT':
 		indexHTML = await crawler.getHTML(PTT)
-		return data.getPttLinks(indexHTML, 3)
+		return data.getPttLinks(indexHTML, int(page))
+
+async def getDocument(website, page):
+	pageList = await getWebList(website, page)
+	pageTasks = tuple(getWebPosts(page, index) for index, page in enumerate(pageList))
+	return await asyncio.gather(*pageTasks)
 
 def getWebsite():
 	print('getData')
@@ -49,22 +58,8 @@ async def main():
 	if index == '1':
 		web = input('\n你想要爬哪個網站？\n請輸入選項數字\n(1)PTT\n')
 		if web == '1':
-			pageList = await getWebList('PTT')
-			# print(pageList)
-			contentList = []
-			for pageIndex, page in enumerate(pageList):
-				print('start page: {}'.format(pageIndex))
-				postList = await getWebPosts(page)
-				# print(postList)
-				tasks = []
-				for postIndex, post in enumerate(postList):
-					tasks.append(getWebContents(post))
-					# contentList.append(loop.run_until_complete(getWebContents(post)))
-				contentList.append(await asyncio.gather(*tasks))
-				print('end page: {}'.format(pageIndex))
-			print(contentList)
-			
-			# allLink = loop.run_until_complete()
+			doc = await getDocument('PTT', 2)
+			print(doc)
 	else:
 		readFile(dataList[int(index)-2])
 
