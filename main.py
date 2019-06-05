@@ -4,6 +4,7 @@ import fileSystem
 import weight
 import show
 import asyncio
+import io
 
 dataList = []
 PTT = 'https://www.ptt.cc/bbs/Gossiping/index.html'
@@ -60,6 +61,8 @@ async def main():
 		if web == '1':
 			doc = await getDocument('PTT', 2)
 			print(doc)
+			with io.open("Output.txt","w",encoding = "utf8") as text_file:
+				text_file.write(u'\n'.join(tuple('\n'.join(page) for page in doc)))
 	else:
 		readFile(dataList[int(index)-2])
 

@@ -2,15 +2,22 @@
 import time
 import jieba
 import thulac
+import io
 
+with io.open("Output.txt","r",encoding = "utf8") as f:
+    text = f.read()
 start_time_jieba = time.time()
-seg_list = jieba.cut("吉卜力工作室與愛知縣政府於5月底為2022年秋季預定在「愛・地球博記念公園」中開幕的「吉卜力樂園」簽訂初步合約，並公開了部分的園區設計圖。在本次簽訂的基本合作方針中包括有：以不危害自然環境為前提之下表現吉卜力作品的世界觀來進行規劃、繼承愛知萬博的理念與成果、讓多元的使用者能夠樂在其中的公園與公園內既有的設施與活動共存……等。而關於園區的詳細規畫（包括入園人數展望、票價等詳細資訊）皆還有待後續討論。根據官方所發布之情報，「吉卜力樂園」預計將分為多個區域，包括了呈現《心之谷》世界觀的「青春之丘」；還有目前已在紀念公園中、重現《龍貓》皋月與小梅家的「Dondoko之森」等，將於2022年秋季開幕。而以《魔法公主》為主題的「魔法之村」；以及《魔女宅急便》的「魔女之谷）」則將預定在2023年秋季開幕。")
-print(",".join(seg_list))
-print("Total running time: {}".format(time.time() - start_time_jieba))
+seg_list = jieba.cut(text)
+with io.open("cut_jieba.txt","w",encoding = "utf8") as f:
+    f.write(" ".join(seg_list))
+print("Total running time of jieba: {}".format(time.time() - start_time_jieba))
 
+with io.open("Output.txt","r",encoding = "utf8") as f:
+    text = f.read()
 start_time_thulac = time.time()
 thu1 = thulac.thulac(seg_only = True)
-text = thu1.cut("吉卜力工作室與愛知縣政府於5月底為2022年秋季預定在「愛・地球博記念公園」中開幕的「吉卜力樂園」簽訂初步合約，並公開了部分的園區設計圖。在本次簽訂的基本合作方針中包括有：以不危害自然環境為前提之下表現吉卜力作品的世界觀來進行規劃、繼承愛知萬博的理念與成果、讓多元的使用者能夠樂在其中的公園與公園內既有的設施與活動共存……等。而關於園區的詳細規畫（包括入園人數展望、票價等詳細資訊）皆還有待後續討論。根據官方所發布之情報，「吉卜力樂園」預計將分為多個區域，包括了呈現《心之谷》世界觀的「青春之丘」；還有目前已在紀念公園中、重現《龍貓》皋月與小梅家的「Dondoko之森」等，將於2022年秋季開幕。而以《魔法公主》為主題的「魔法之村」；以及《魔女宅急便》的「魔女之谷）」則將預定在2023年秋季開幕。",text=True)
-print(text)
-print("Total running time: {}".format(time.time() - start_time_thulac))
+cut_text = thu1.cut(text,text=True)
+with io.open("cut_thulac.txt","w",encoding = "utf8") as f:
+    f.write(cut_text)
+print("Total running time of thulac: {}".format(time.time() - start_time_thulac))
 #thu1.cut_f("input.txt","output.txt")
