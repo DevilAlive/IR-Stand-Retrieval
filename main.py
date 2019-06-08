@@ -80,10 +80,9 @@ async def main():
 	while query != 'n':
 		tfidfList = computeWeight(query, N, doc, term)
 		print('搜尋結果:')
-		for doc in tfidfList:
-			print(doc)
-			link = url[int(doc.split()[0])]
-			tfidf = doc.split()[1]
+		for res in tfidfList:
+			link = url[int(res.split()[0])]
+			tfidf = res.split()[1]
 			print(link + ' -> ' + tfidf)
 		query = input('\n關鍵字:')
 
