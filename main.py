@@ -72,15 +72,16 @@ async def main():
 				url += link
 			doc = data.termTransform(doc)
 			N, term = data.getData(doc)
-			fileSystem.saveFile(N, link, doc, term)
+			fileSystem.saveFile(N, url, doc, term)
 	else:
 		N, url, doc, term = readFile(dataList[int(index)-2])
 
-	query = input('\ninput:')
+	query = input('\n關鍵字:')
 	while query != 'n':
 		tfidfList = computeWeight(query, N, doc, term)
 		print('搜尋結果:')
 		for doc in tfidfList:
+			print(doc)
 			link = url[int(doc.split()[0])]
 			tfidf = doc.split()[1]
 			print(link + ' -> ' + tfidf)
