@@ -5,6 +5,10 @@ import time
 
 PATH = './data/'
 
+def buildDataDir():
+	if not os.path.isdir(PATH):
+		os.mkdir(PATH)
+
 def getDataList():
 	if os.path.isdir(PATH):
 		print('find the data.')

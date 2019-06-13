@@ -4,12 +4,14 @@ import fileSystem
 import weight
 import show
 import asyncio
+import time
 
 dataList = []
 PTT = 'https://www.ptt.cc/bbs/Gossiping/index.html'
 PTT_DOMAIN = 'https://www.ptt.cc'
 
 def searchFile():
+	fileSystem.buildDataDir()
 	dataList = fileSystem.getDataList()
 	return dataList, tuple('('+str(index+2)+') '+dataList[index] for index in range(len(dataList)))
 
@@ -66,25 +68,28 @@ async def main():
 		web = input('\n你想要爬哪個網站？\n請輸入選項數字\n(1)PTT\n')
 		if web == '1':
 			num = input('\n你想要抓多少頁數？\n請輸入數字\n')
+			startTime = time.time()
 			links, doc = await getDocument('PTT', num)
+			print('爬蟲耗時: {}秒'.format(time.time() - startTime))
 			url = []
 			for link in links:
 				url += link
 			doc = data.termTransform(doc)
 			N, term = data.getData(doc)
 			fileSystem.saveFile(N, url, doc, term)
-	else:
+	elif (int(index)-2) < len(dataList):
 		N, url, doc, term = readFile(dataList[int(index)-2])
 
-	query = input('\n關鍵字:')
-	while query != 'n':
-		tfidfList = computeWeight(query, N, doc, term)
-		print('搜尋結果:')
-		for res in tfidfList:
-			link = url[int(res.split()[0])]
-			tfidf = res.split()[1]
-			print(link + ' -> ' + tfidf)
+	if N != None and url != None and doc != None and term != None:
 		query = input('\n關鍵字:')
+		while query != 'n':
+			tfidfList = computeWeight(query, N, doc, term)
+			print('搜尋結果:')
+			for res in tfidfList:
+				link = url[int(res.split()[0])]
+				tfidf = res.split()[1]
+				print(link + ' -> ' + tfidf)
+			query = input('\n關鍵字:')
 
 # 非同步任務
 if __name__ == "__main__":
